@@ -1,5 +1,9 @@
 # ads课程project1: Mini Search Engine
-小组成员：丁雨桐
+<<<<<<< HEAD
+
+=======
+小组成员：刘语馨、丁雨桐
+>>>>>>> cc4c4292a2b473d6548be531392ee7e525eca99d
 ## 原理
 
 ## 数据结构
