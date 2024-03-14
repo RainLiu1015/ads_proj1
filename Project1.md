@@ -324,6 +324,11 @@ class trie:
   - 将大量的文件/很大的单个文件按照document name分成可以直接给pretreat处理的格式，比如按照自然段分割、按照句子分割、按照单词分割等
     - [python英文分句，段落->句子](https://blog.csdn.net/weixin_39450145/article/details/112973381)
     - [python英文分局，句子->单词](https://blog.csdn.net/weixin_44749822/article/details/124740549)
+    - [python读取一个文件夹中的所有文件](https://blog.csdn.net/LZGS_4/article/details/50371030)
+    - [python读取一个文件夹中所有文件的文件名](https://blog.csdn.net/zhuzuwei/article/details/79925562)
+  - document parse的具体步骤应该是：
+    1. 先读取莎士比亚全集文件夹下的所有文件名，做成一个dict，这样可以根据文件名查询到文件id：`{document_name: id}`
+    2. 再遍历dict，用word_counter处理每个文件，同时进行pretreat、将terms加入trie
   - 返回一个可以直接传给pretreat处理的数据结构
 - pretreat(stemming & stopwords)
   - 用stopword功能去除所有stopwords
