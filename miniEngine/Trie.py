@@ -126,8 +126,8 @@ class Test(unittest.TestCase):
     def test_many_insert(self):
         new_tire = Trie()
         wc = naive_word_count.naive_word_counter()
-        file_name1 = "text/random_word_list_1000.txt"
-        file_name2 = "text/random_word_list_1000_copy.txt"
+        file_name1 = "text/test/random_word_list_1000.txt"
+        file_name2 = "text/test/random_word_list_1000_copy.txt"
         document_name1 = "rw1"
         document_name2 = "rw2"
         wc.open_file(file_name1)

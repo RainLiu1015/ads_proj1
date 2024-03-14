@@ -27,7 +27,7 @@ class naive_word_counter:
 
 class Test(unittest.TestCase):
     def test_1000_words(self):
-        file_name = "text/random_word_list_1000.txt"
+        file_name = "text/test/random_word_list_1000.txt"
         wc = naive_word_counter()
         wc.open_file(file_name)
         wc.naive_word_count()
