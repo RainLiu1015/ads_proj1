@@ -64,22 +64,7 @@ class pretreater:
 
     def phrase_spliter(self, file_name: str):
         word_list = []
-        current_word = []
         word_index = 0
-        # with open(file_name, 'r') as f:
-        #     text = f.read()
-        # for i, c in enumerate(text):
-        #     if c.isalnum():
-        #         current_word.append(c)
-        #     elif current_word:
-        #         word_index += 1
-        #         word = u''.join(current_word).lower()
-        #         word_list.append((word_index, word))
-        #         current_word = []
-        # if current_word:
-        #     word_index += 1
-        #     word = u''.join(current_word).lower()
-        #     word_list.append((word_index, word))
         current_word = self.split_file(file_name)
         for word in current_word:
             word_list.append((word_index, word))
