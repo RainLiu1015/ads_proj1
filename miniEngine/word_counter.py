@@ -134,7 +134,7 @@ class word_cunter:
 class word_counter_test(unittest.TestCase):
     def test_get_all_works(self):
         wc = word_cunter()
-        wc.set_path("G:/P1/miniEngine/text/Shakespeare/")
+        wc.set_path("text/Shakespeare/")
         wc.get_all_works()
         print(wc.all_works)
         # 测试通过
@@ -143,7 +143,7 @@ class word_counter_test(unittest.TestCase):
 
     def test_word_count_file_name(self):
         wc = word_cunter()
-        wc.set_path('G:/P1/miniEngine/text/Shakespeare/')
+        wc.set_path('text/Shakespeare/')
         wc.get_all_works()
         for work_name in wc.all_works:
             file_name = wc.path + work_name
