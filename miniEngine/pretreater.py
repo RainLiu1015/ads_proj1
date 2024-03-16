@@ -36,7 +36,7 @@ class pretreater:
     def split_file(self, file_name: str):
         word_list = []
         pattern = r',|\.|/|;|\'|`|\[|\]|<|>|\?|:|"|\{|\}|\~|!|#|\$|\^|&|\(|\)|-|=|\_|\+|，|。|、|；|‘|’|【|】|·|！| |…|（|）|\n'
-        with open(file_name, 'r') as f:
+        with open(file_name, encoding='gb18030', errors='ignore') as f:
             for line in f:
                 line = line.lower()
                 first_splited = re.split(pattern, line)
@@ -107,62 +107,62 @@ class pretreater:
 class Test(unittest.TestCase):
     def test_split_short(self):
         pre = pretreater()
-        file_name = 'text/small_test/sentence_test.txt'
+        file_name = 'G:/P1/miniEngine/text/small_test/sentence_test.txt'
         print(pre.split_file(file_name))
 
     def test_split_long(self):
         pre = pretreater()
-        file_name = 'text/Shakespeare/AsYouLikeIt.txt'
+        file_name = 'G:/P1/miniEngine/text/Shakespeare/AsYouLikeIt.txt'
         print(pre.split_file(file_name))
 
     def test_filter_short(self):
         pre = pretreater()
-        file_name = 'text/small_test/sentence_test.txt'
+        file_name = 'G:/P1/miniEngine/text/small_test/sentence_test.txt'
         print(pre.filter(file_name))
 
     def test_filter_long(self):
         pre = pretreater()
-        file_name = 'text/Shakespeare/AsYouLikeIt.txt'
+        file_name = 'G:/P1/miniEngine/text/Shakespeare/AsYouLikeIt.txt'
         print(pre.filter(file_name))
 
     def test_stemmer_short(self):
         pre = pretreater()
-        file_name = 'text/small_test/sentence_test.txt'
+        file_name = 'G:/P1/miniEngine/text/small_test/sentence_test.txt'
         print(pre.final_stemmer(file_name))
 
     def test_stemmer_long(self):
         pre = pretreater()
-        file_name = 'text/Shakespeare/AsYouLikeIt.txt'
+        file_name = 'G:/P1/miniEngine/text/Shakespeare/AsYouLikeIt.txt'
         print(pre.final_stemmer(file_name))
 
     def test_phrase_spliter_short(self):
         pre = pretreater()
-        file_name = 'text/small_test/sentence_test.txt'
+        file_name = 'G:/P1/miniEngine/text/small_test/sentence_test.txt'
         print(pre.phrase_spliter(file_name))
 
     def test_phrase_spliter_long(self):
         pre = pretreater()
-        file_name = 'text/Shakespeare/AsYouLikeIt.txt'
+        file_name = 'G:/P1/miniEngine/text/Shakespeare/AsYouLikeIt.txt'
         print(pre.phrase_spliter(file_name))
         # 至少证明了一点，处理起一个文件来还是很快速的
 
     def test_phrase_indexer_short(self):
         pre = pretreater()
-        file_name = 'text/small_test/sentence_test.txt'
+        file_name = 'G:/P1/miniEnginetext/small_test/sentence_test.txt'
         result = pre.phrase_indexer(file_name)
         self.assertEqual(len(result.get('plays')), 1)
         self.assertEqual(len(result.get('example')), 1)
 
     def test_phrase_indexer_medium(self):
         pre = pretreater()
-        file_name = 'text/small_test/fragment.txt'
+        file_name = 'G:/P1/miniEnginetext/small_test/fragment.txt'
         result = pre.phrase_indexer(file_name)
         self.assertEqual(len(result.get('you')), 3)
         self.assertEqual(len(result.get('to')), 4)
 
     def test_phrase_indexer_long(self):
         pre = pretreater()
-        file_name = 'text/Shakespeare/Hamlet.txt'
+        file_name = 'G:/P1/miniEngine/text/Shakespeare/Hamlet.txt'
         result = pre.phrase_indexer(file_name)
         self.assertEqual(len(result.get('francisco')), 10)
         self.assertEqual(len(result.get('prince')), 9)

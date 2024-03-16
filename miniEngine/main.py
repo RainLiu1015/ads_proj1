@@ -3,7 +3,7 @@ import word_counter
 def Query(wc: word_counter.word_cunter):
     print("欢迎在莎士比亚全集中查询您想要的内容")
     print("正在加载中，这将需要一段时间……\n")
-    wc.setup('text/Shakespeare/')
+    wc.setup('G:/P1/miniEngine/text/Shakespeare/')
     while True:
         text = input("请输入你要查询的单词或短语，退出请输入q:")
         if (text == 'q'):
