@@ -62,6 +62,62 @@ class pretreater:
             stemmed_word.append(word)
         return stemmed_word
 
+    def phrase_spliter(self, file_name: str):
+        word_list = []
+        current_word = []
+        word_index = 0
+        # with open(file_name, 'r') as f:
+        #     text = f.read()
+        # for i, c in enumerate(text):
+        #     if c.isalnum():
+        #         current_word.append(c)
+        #     elif current_word:
+        #         word_index += 1
+        #         word = u''.join(current_word).lower()
+        #         word_list.append((word_index, word))
+        #         current_word = []
+        # if current_word:
+        #     word_index += 1
+        #     word = u''.join(current_word).lower()
+        #     word_list.append((word_index, word))
+        current_word = self.split_file(file_name)
+        for word in current_word:
+            word_list.append((word_index, word))
+            word_index += 1
+
+        return word_list
+
+    # 上面这个函数只能用来处理file，但是如果要处理phrase，就需要phrase_spliter_for_words
+    def phrase_spliter_for_words(self, text: str):
+        word_list = []
+        current_word = []
+        word_index = 0
+        for i, c in enumerate(text):
+            if c.isalnum():
+                current_word.append(c)
+            elif current_word:
+                word_index += 1
+                word = u''.join(current_word).lower()
+                word_list.append((word_index, word))
+                current_word = []
+        if current_word:
+            word_index += 1
+            word = u''.join(current_word).lower()
+            word_list.append((word_index, word))
+
+        return word_list
+
+    # 这个函数用于在某个特定文件中这样的dict：{word: [locations]}
+    # 即这个word在这个file_name对应的file中在哪些地方出现了
+    def phrase_indexer(self, file_name: str):
+        inverted = {}
+
+        for index, word in self.phrase_spliter(file_name):
+            # 设定location的dict格式
+            locations = inverted.setdefault(word, [])
+            locations.append(index)
+
+        return inverted
 
 class Test(unittest.TestCase):
     def test_split_short(self):
@@ -93,3 +149,38 @@ class Test(unittest.TestCase):
         pre = pretreater()
         file_name = 'text/Shakespeare/AsYouLikeIt.txt'
         print(pre.final_stemmer(file_name))
+
+    def test_phrase_spliter_short(self):
+        pre = pretreater()
+        file_name = 'text/small_test/sentence_test.txt'
+        print(pre.phrase_spliter(file_name))
+
+    def test_phrase_spliter_long(self):
+        pre = pretreater()
+        file_name = 'text/Shakespeare/AsYouLikeIt.txt'
+        print(pre.phrase_spliter(file_name))
+        # 至少证明了一点，处理起一个文件来还是很快速的
+
+    def test_phrase_indexer_short(self):
+        pre = pretreater()
+        file_name = 'text/small_test/sentence_test.txt'
+        result = pre.phrase_indexer(file_name)
+        self.assertEqual(len(result.get('plays')), 1)
+        self.assertEqual(len(result.get('example')), 1)
+
+    def test_phrase_indexer_medium(self):
+        pre = pretreater()
+        file_name = 'text/small_test/fragment.txt'
+        result = pre.phrase_indexer(file_name)
+        self.assertEqual(len(result.get('you')), 3)
+        self.assertEqual(len(result.get('to')), 4)
+
+    def test_phrase_indexer_long(self):
+        pre = pretreater()
+        file_name = 'text/Shakespeare/Hamlet.txt'
+        result = pre.phrase_indexer(file_name)
+        self.assertEqual(len(result.get('francisco')), 10)
+        self.assertEqual(len(result.get('prince')), 9)
+        self.assertEqual(len(result.get('sadness')), 1)
+        self.assertEqual(len(result.get('queen')), 119)
+        # Ran 1 test in 0.066s, test pass
