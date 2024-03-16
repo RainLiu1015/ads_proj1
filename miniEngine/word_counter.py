@@ -84,6 +84,8 @@ class word_cunter:
         else: # 此时是一个短语
             # 先得到第一个word的locations
             first_word = words_tuple[0][1]
+            if first_word not in self.indices.keys():
+                return []
             final_locations = self.indices.get(first_word).copy()
             # 如果第一个word都找不到的话，肯定就返回空了
             if len(final_locations) == 0:
@@ -91,6 +93,8 @@ class word_cunter:
             #接下来用排除法
             for i in range(1, len(words_tuple)):
                 curr_word = words_tuple[i][1]
+                if curr_word not in self.indices.keys():
+                    return []
                 curr_locations = self.indices.get(curr_word).copy()
                 # curr_locations = {document_name: [locations]}
                 if len(curr_locations) == 0:
