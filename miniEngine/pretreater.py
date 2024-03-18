@@ -28,7 +28,7 @@ class pretreater:
                            'isn', "isn't", 'ma', 'mightn', "mightn't", 'mustn', "mustn't", 'needn',
                            "needn't", 'shan', "shan't", 'shouldn', "shouldn't", 'wasn', "wasn't",
                            'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't", 's']
-        # 唯一的问题，Porter Stemmer的精确度确实不够……对过去式的stemming非常之差
+        # 将porter stemmer改为了snowball stemmer，相对更加精准一点
         self.stemmer = snowballstemmer.stemmer('english')
 
     # 这个函数将会处理单个文件，将.txt文件中的内容进行分句和分词，最后传回一个word的list
@@ -62,6 +62,14 @@ class pretreater:
             stemmed_word.append(word)
         return stemmed_word
 
+    """
+    这里的spliter和接下来的phrease indexer的思路借鉴了来自 https://blog.csdn.net/u014328357/article/details/49943037 的CSDN博客
+    原博主为： @玉儿Qi
+    个人主页网站：https://blog.csdn.net/u014328357?type=blog
+    因为是借鉴的，所以有些数据结构和原文件有不匹配的地方，同时产生了部分数据的冗余
+    （譬如其实word_list中的元素是tuple，但是在此project的后面部分只用到了tuple中的word，并没有用到id这个属性）
+    这是本project的不足之处之一，待大家闲下来之后将会逐步修改精简
+    """
     def phrase_spliter(self, file_name: str):
         word_list = []
         word_index = 0
