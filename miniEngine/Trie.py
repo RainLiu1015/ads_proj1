@@ -1,6 +1,10 @@
 import unittest
 import naive_word_count
 
+"""
+Trie的建构思路和部分代码参考了此wiki网站：https://oi-wiki.org/string/trie/
+"""
+
 # 定义TrieNode，结构如下
 class TrieNode:
     def __init__(self):

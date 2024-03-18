@@ -4,8 +4,8 @@
 
 ## 数据结构
 
-- Trie
-- python的dictionary，及其嵌套使用
+- Trie，用于储存word count的数据。
+- python的dictionary及其嵌套使用，用来实现search功能。在python中，dictionary的内部数据结构为hash table，其访问、修改和插入的时间复杂度为$O(1)$。
 
 ## project框架
 
@@ -33,6 +33,8 @@
 
 - Pretreater
 
+  用于初步处理文本。
+  
   - `__init__(self)`: 定义[stop words](https://www.nltk.org/data.html) 和[stemmer](https://pypi.org/project/snowballstemmer/)，
   - `split_file(self, file_name: str)`： 把路径是file_name的文件分成一个单词的列表，保留所有的stop words并且没有stemming
   - ` filter(self, file_name: str)`：把split过后的单词列表过滤出stop words，返回一个单词列表
@@ -40,6 +42,8 @@
   - `phrase_indexer(self, file_name: str)`: 根据file_name路径中的文件，生成一个dictionary：{word: [locations]}， 包含了这个文件中出现过的所有单词（包括stop words，没有stemming）所在的位置
   
 - Word_counter
+
+  主要的处理器。
 
   - 初始化(`__init__(self)`):
 
@@ -75,14 +79,22 @@
 
 - main
 
+  query入口。
+  
   - `Query(wc: word_counter.word_cunter)`： 查询接口。其中唯一调用的是word counter中的serach 函数
   - `__main__`：新建一个word counter传入到query中，它是可以运行的
 
 
 ## 测试和结果展示
 
+- 环境配置：python 3.11（请确保您正确设置了路径，并且在命令行工具中可以正常使用python）
+- 操作步骤：
+  - `cd`到目录`proj1/miniEngine/`下；
+  - 在命令行运行`python main.py`或`python3 main.py`；
+  - 按照提示在命令行工具中输入要查询的内容/操作。
+
 在终端中的运行如下：
 
-<img src="/Users/apple/Desktop/截屏2024-03-18 09.10.16.png" alt="截屏2024-03-18 09.10.16" style="zoom:50%;" />
+<img src="test.png" style="zoom:50%;" />
 
 在每个.py文件中有对应的test case，一些因为数据量过大只能用肉眼判断的并没有写上assert（偷懒了就是）
