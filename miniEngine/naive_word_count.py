@@ -1,5 +1,10 @@
 import unittest
 
+"""
+wordcounter的雏形，不进行stemming和filtering的wordcounter
+在最终的成品中没有用到
+"""
+
 class naive_word_counter:
     def __init__(self):
         self.word_count = {}
@@ -9,7 +14,7 @@ class naive_word_counter:
     def open_file(self, file_name: str):
         with open(file_name, 'r') as f:
             for line in f:
-                splited = line.split()
+                splited = line.split() # 每一行按照空格split
                 for word in splited:
                     self.word_list.append(word)
 
@@ -20,7 +25,7 @@ class naive_word_counter:
                 self.word_count[word] += 1
             else :
                 self.word_count[word] = 1
-    # 在每次count不同的文件之前都需要reset一下
+    # 在每次count不同的文件之前都需要reset一下，清空wordlist
     def reset(self):
         self.word_list.clear()
         self.word_count.clear()

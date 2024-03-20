@@ -2,7 +2,6 @@ import Trie
 import os
 import unittest
 import pretreater
-from functools import reduce
 
 class word_cunter:
     def __init__(self):
@@ -37,10 +36,10 @@ class word_cunter:
             file_name = self.path + work_name
             curr_words = self.pre.final_stemmer(file_name)
             curr_dict = {}
-            for word in curr_words:
+            for word in curr_words: # 如果该word是第一次出现
                 if word not in curr_dict:
                     curr_dict[word] = 1
-                else:
+                else: # 如果已经出现过
                     curr_dict[word] += 1
             # print(curr_dict) 这一句是用来人工测试word count的正确性的
             for word in curr_dict:
@@ -109,8 +108,8 @@ class word_cunter:
                 for document_name in list(curr_locations.keys()):
                     locations1 = final_locations.get(document_name)
                     locations2 = curr_locations.get(document_name)
-                    locations1 = [x + 1 for x in locations1]
-                    locations2 = list(set(locations1) & set(locations2)) # 求交集
+                    locations1 = [x + 1 for x in locations1] # 将locations1中的所有location都加1，得到后继位置
+                    locations2 = list(set(locations1) & set(locations2)) # 将后继位置和现有的locations2求交集
                     if len(locations2) == 0:
                         if document_name in curr_locations.keys():
                             del curr_locations[document_name]
@@ -118,7 +117,8 @@ class word_cunter:
                             return []
                     else :
                         curr_locations[document_name] = locations2
-                    # 更新，将final_locations改为curr_location经过两轮排除后剩下的值
+                    # 更新，将final_locations改为curr_location经过两轮排除后剩下的值，
+                    # final locations的长度在运算中应该不断缩短，这样也使得后期运算不会太慢
                 final_locations = curr_locations
             for document_name in final_locations.keys():
                 result.append(document_name)

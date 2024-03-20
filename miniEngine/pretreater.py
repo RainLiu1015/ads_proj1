@@ -1,10 +1,18 @@
 import unittest
-# https://pypi.org/project/snowballstemmer/#description snowball stemmer
-# 问题：在遇到任何以e结尾的单词时，stemmer都会将其词尾的e去除，这一点在query的时候要注意
+"""
+snowball stemmer来自于 https://pypi.org/project/snowballstemmer/#description
+Author：snowball-discuss@lists.tartarus.org
+"""
 import snowballstemmer
 import re
 
 class pretreater:
+
+    """
+    stop words来自 https://www.nltk.org/data.html
+    下载nltk_data.zip文件后解压，在corpora目录中可以找到stopwords文件夹
+    内有名为english的文件，打开后可以使用其内容
+    """
     def __init__(self):
         self.stop_words = ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves',
                            'you', "you're", "you've", "you'll", "you'd", 'your', 'yours',
@@ -36,24 +44,27 @@ class pretreater:
     def split_file(self, file_name: str):
         word_list = []
         pattern = r',|\.|/|;|\'|`|\[|\]|<|>|\?|:|"|\{|\}|\~|!|#|\$|\^|&|\(|\)|-|=|\_|\+|，|。|、|；|‘|’|【|】|·|！| |…|（|）|\n'
+        # 选择编码方式为gb18030，适配更多硬件；忽略error，防止运行时报错
         with open(file_name, encoding='gb18030', errors='ignore') as f:
             for line in f:
-                line = line.lower()
-                first_splited = re.split(pattern, line)
+                line = line.lower() # 忽略大小写
+                first_splited = re.split(pattern, line) # 以pattern中的所有符号为分割
                 for word in first_splited:
                     if word != '':
                         word_list.append(word)
 
         return word_list
 
-    def filter(self, file_name: str):
+    def filter(self, file_name: str): # 去除stop words
         word_list = self.split_file(file_name)
         filtered_words = []
         for word in word_list:
-            if not word in self.stop_words:
+            if not word in self.stop_words: # 保留不在stopwords表中的words
                 filtered_words.append(word)
         return filtered_words
 
+    # 进行stemming（哎实际上可以边filter边stemming的）
+    # 但是为了模块化&更加清晰，同时也不方便改动已有的结构，就将stemmer和filter分开了
     def final_stemmer(self, file_name: str):
         word_list = self.filter(file_name)
         stemmed_word = []
@@ -68,7 +79,7 @@ class pretreater:
     个人主页网站：https://blog.csdn.net/u014328357?type=blog
     因为是借鉴的，所以有些数据结构和原文件有不匹配的地方，同时产生了部分数据的冗余
     （譬如其实word_list中的元素是tuple，但是在此project的后面部分只用到了tuple中的word，并没有用到id这个属性）
-    这是本project的不足之处之一，待大家闲下来之后将会逐步修改精简
+    这是本project的不足之处之一，待有空将会逐步修改精简
     """
     def phrase_spliter(self, file_name: str):
         word_list = []
@@ -90,10 +101,10 @@ class pretreater:
                 current_word.append(c)
             elif current_word:
                 word_index += 1
-                word = u''.join(current_word).lower()
+                word = u''.join(current_word).lower() # 忽略大小写
                 word_list.append((word_index, word))
                 current_word = []
-        if current_word:
+        if current_word: # 如果current word不为空的话
             word_index += 1
             word = u''.join(current_word).lower()
             word_list.append((word_index, word))

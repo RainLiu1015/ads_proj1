@@ -13,7 +13,7 @@ class TrieNode:
         # 查看一个TrieNode是否有某个后继节点：print(char in TrieNode.children)
         self.isLeaf = False
         # content用来存放一个word在document中出现的次数
-        # 形式为：{'document1': time1, 'document2': word2}
+        # 形式为：{'document1': time1, 'document2': time2}
         self.content = dict()
 
 
@@ -48,6 +48,7 @@ class Trie(object):
         # 创建新的Trie，从一个空的TrieNode开始
         self.root = TrieNode()
 
+    # 如果存在，返回tail node；反之，返回false
     def is_exist(self, word: str):
         return self.root.search(word)
 
@@ -62,12 +63,13 @@ class Trie(object):
             is_find.content[document_name] = frequency
 
     # 使用getRoot函数返回Trie的root
-    # 最好不要直接使用Trie.root
+    # 最好不要直接使用Trie.root，虽然此project中并没有规定private属性
     def getRoot(self):
         return self.root
 
     # Query函数，在一个Trie中查找word在document_name中出现的次数
     # 输出一个单词在每个文件中出现的次数
+    # 在实际运行中并没有用到这个函数，只在test case中使用过
     def Query(self, word: str):
         is_find = self.root.search(word)
         if not is_find:
