@@ -3,6 +3,7 @@ import unittest
 """
 wordcounter的雏形，不进行stemming和filtering的wordcounter
 在最终的成品中没有用到
+但是在在较为简单的test case中有作为参照出现
 """
 
 class naive_word_counter:

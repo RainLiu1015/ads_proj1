@@ -55,22 +55,14 @@ class pretreater:
 
         return word_list
 
-    def filter(self, file_name: str): # 去除stop words
-        word_list = self.split_file(file_name)
-        filtered_words = []
-        for word in word_list:
-            if not word in self.stop_words: # 保留不在stopwords表中的words
-                filtered_words.append(word)
-        return filtered_words
-
-    # 进行stemming（哎实际上可以边filter边stemming的）
-    # 但是为了模块化&更加清晰，同时也不方便改动已有的结构，就将stemmer和filter分开了
+    # 进行filter & stemming
     def final_stemmer(self, file_name: str):
-        word_list = self.filter(file_name)
+        word_list = self.split_file(file_name)
         stemmed_word = []
         for word in word_list:
-            word = self.stemmer.stemWord(word)
-            stemmed_word.append(word)
+            if not word in self.stop_words:
+                word = self.stemmer.stemWord(word)
+                stemmed_word.append(word)
         return stemmed_word
 
     """
@@ -134,15 +126,15 @@ class Test(unittest.TestCase):
         file_name = 'text/Shakespeare/AsYouLikeIt.txt'
         print(pre.split_file(file_name))
 
-    def test_filter_short(self):
-        pre = pretreater()
-        file_name = 'text/small_test/sentence_test.txt'
-        print(pre.filter(file_name))
+    # def test_filter_short(self):
+    #     pre = pretreater()
+    #     file_name = 'text/small_test/sentence_test.txt'
+    #     print(pre.filter(file_name))
 
-    def test_filter_long(self):
-        pre = pretreater()
-        file_name = 'text/Shakespeare/AsYouLikeIt.txt'
-        print(pre.filter(file_name))
+    # def test_filter_long(self):
+    #     pre = pretreater()
+    #     file_name = 'text/Shakespeare/AsYouLikeIt.txt'
+    #     print(pre.filter(file_name))
 
     def test_stemmer_short(self):
         pre = pretreater()
