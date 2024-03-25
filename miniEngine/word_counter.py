@@ -22,8 +22,6 @@ class word_cunter:
         self.count = {}
         # stemmer
         self.stemmer = snowballstemmer.stemmer('english')
-        # 一个trie，用来进行wordcount_trie
-        self.t = Trie.Trie
 
     def set_path(self, p: str): # 为project1， 这里默认path是文件夹Shakespeare的path
         self.path = p
