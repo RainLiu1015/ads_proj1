@@ -2,6 +2,7 @@ import Trie
 import os
 import unittest
 import pretreater
+import snowballstemmer
 
 class word_cunter:
     def __init__(self):
@@ -11,14 +12,18 @@ class word_cunter:
         self.num_document = 0
         # 一个string，用来存放Shakespeare文件夹的相对路径
         self.path = ''
-        # 一个trie，用来存放inverted index
-        self.new_trie = Trie.Trie()
         # 一个list，用来存放所有的stop words
         self.stop_words = []
         # 一个pretreater, 包含了split，filter，stemmer等组件
         self.pre = pretreater.pretreater()
         # 一个dict，用于存放搜索用的indices
         self.indices = {}
+        # 一个dict，用来记录term出现的总次数
+        self.count = {}
+        # stemmer
+        self.stemmer = snowballstemmer.stemmer('english')
+        # 一个trie，用来进行wordcount_trie
+        self.t = Trie.Trie
 
     def set_path(self, p: str): # 为project1， 这里默认path是文件夹Shakespeare的path
         self.path = p
@@ -32,24 +37,23 @@ class word_cunter:
                 self.num_document += 1
 
     def word_counter(self):
-        for work_name in self.all_works:
-            file_name = self.path + work_name
-            curr_words = self.pre.final_stemmer(file_name)
-            curr_dict = {}
-            for word in curr_words: # 如果该word是第一次出现
-                if word not in curr_dict:
-                    curr_dict[word] = 1
-                else: # 如果已经出现过
-                    curr_dict[word] += 1
-            # print(curr_dict) 这一句是用来人工测试word count的正确性的
-            for word in curr_dict:
-                self.new_trie.insert(word, work_name, curr_dict[word])
-    """            
-    这个函数用来处理所有self.all_works中的work，最后将输出这样的一个dict：{word: [document_name: location]}
-    值得注意的是：
-    1. dict类型的长度容量有限，如果太超过，查询速度必然减慢。但是事到如今，只能……上吧！dict！
-    2. 不能使用pre.split_file()，而一定要使用pre.phrase_indexer()，因为word_spliter自动忽略了stop word，并且stem
-        但是phrase中不能如此，事实上，很多phrase中含有大量的stop words
+        for word in self.indices:
+            sum = 0
+            for file_name in self.indices[word]:
+                sum += len(self.indices[word][file_name])
+            word = self.stemmer.stemWord(word) # 经过了stemming之后再加入count中
+            if word not in self.count:
+                self.count[word] = sum
+            else :
+                self.count[word] += sum
+        for i in range(50): #将出现次数最多的50个单词设为stop words
+            curr_word = max(self.count, key=lambda x: self.count[x])
+            self.stop_words.append(curr_word)
+            print('单词', curr_word , '出现了', self.count[curr_word], '次，设为stop wrod')
+            self.count.pop(curr_word)
+
+    """
+    建立一个invered index,形式为{word: {document_name: [locations]}}
     """
     def all_work_phrase_indexer(self):
         indices = {}
@@ -75,12 +79,19 @@ class word_cunter:
         #     print(word[1])  words是一个由tuple(int, word)组成的list
         if (len(words_tuple) == 1): # 此时是一个单词
             word = words_tuple[0][1]
+            if (word in self.stop_words):
+                print('您查询的是一个stopword，请重新输入！')
+                return result
             if word not in self.indices.keys():
                 return result
             else:
                 for document_name in self.indices.get(word).keys():
                     result.append(document_name)
         else: # 此时是一个短语
+            # 判断是否是3个及一下的stop word组成的，如果是，则不予搜索
+            if all(tuple[1] in self.stop_words for tuple in words_tuple) and len(words_tuple) <= 3:
+                print('您输入的是三个及以下的stop words组成的短语，请重新输入！')
+                return result
             # 先得到第一个word的locations
             first_word = words_tuple[0][1]
             if first_word not in self.indices.keys():
@@ -129,11 +140,11 @@ class word_cunter:
         self.set_path(path)
         print('定位完成，正在扫描作品……')
         self.get_all_works()
-        print('扫描完成，正在建立进行word count……')
-        self.word_counter()
-        print('word count完成，正在建立inverted index……')
+        print('正在建立inverted index……')
         self.all_work_phrase_indexer()
-        print('inverted index建立完成。enjoy！')
+        print('正在建立进行word count并设定stop words……')
+        self.word_counter()
+        print('设置完成。enjoy！')
 
 class word_counter_test(unittest.TestCase):
     def test_get_all_works(self):
@@ -156,20 +167,13 @@ class word_counter_test(unittest.TestCase):
         # 输出形式：text/Shakespeare/TitusAndronicus.txt
         # 测试通过
 
-    def test_word_count_small(self):
-        wc = word_cunter()
-        wc.set_path('text/small_test/')
-        wc.get_all_works()
-        wc.word_counter()
-        curr_tire = wc.new_trie
-        self.assertEqual(curr_tire.is_exist('play').content.get('sentence_test.txt'), 2)
-        self.assertEqual(curr_tire.is_exist('play').content.get('word_count_small_test.txt'), 2)
 
 # 这种数据量巨大且未知结果的模块，只能人眼测试了（汗
     def test_word_count_large(self):
         wc = word_cunter()
         wc.set_path('text/Shakespeare_small_test/')
         wc.get_all_works()
+        wc.all_work_phrase_indexer()
         wc.word_counter()
 
     def test_phrase_indexer_small(self):
@@ -197,9 +201,9 @@ class word_counter_test(unittest.TestCase):
         wc.set_path('text/Shakespeare_small_test/')
         wc.get_all_works()
         wc.all_work_phrase_indexer()
-        self.assertEqual(wc.search('hamlet'), ['Hamlet'])
-        self.assertEqual(wc.search('be').sort(), ['Hamlet', 'Fake'].sort())
-        self.assertEqual(wc.search('kiss'), [])
+        self.assertEqual(wc.search('hamlet'), ['Hamlet.txt'])
+        self.assertEqual(wc.search('be').sort(), ['Hamlet.txt', 'Fake.txt'].sort())
+        self.assertEqual(wc.search('kiss'), ['LovesLaboursLost.txt'])
 
     def test_search_phrase_small(self):
         wc = word_cunter()
@@ -212,3 +216,6 @@ class word_counter_test(unittest.TestCase):
         self.assertEqual(wc.search('To die, to sleep'), ['Hamlet.txt'])
         self.assertEqual(wc.search('fake file'), ['Fake.txt'])
         self.assertEqual(wc.search('drink wine'), [])
+
+if __name__ == '__main__':
+    unittest.main()

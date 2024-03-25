@@ -12,8 +12,7 @@ class TrieNode:
         # 此处的dict是一个{char: TrieNode}的形式，表示当前TrieNode的所有children
         # 查看一个TrieNode是否有某个后继节点：print(char in TrieNode.children)
         self.isLeaf = False
-        # content用来存放一个word在document中出现的次数
-        # 形式为：{'document1': time1, 'document2': time2}
+        # n用来存放一个word在所有文件中出现的次数
         self.content = dict()
 
 

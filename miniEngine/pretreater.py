@@ -7,35 +7,7 @@ import snowballstemmer
 import re
 
 class pretreater:
-
-    """
-    stop words来自 https://www.nltk.org/data.html
-    下载nltk_data.zip文件后解压，在corpora目录中可以找到stopwords文件夹
-    内有名为english的文件，打开后可以使用其内容
-    """
     def __init__(self):
-        self.stop_words = ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves',
-                           'you', "you're", "you've", "you'll", "you'd", 'your', 'yours',
-                           'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she',
-                           "she's", 'her', 'hers', 'herself', 'it', "it's", 'its',
-                           'itself', 'they', 'them', 'their', 'theirs', 'themselves',
-                           'what', 'which', 'who', 'whom', 'this', 'that', "that'll",
-                           'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been',
-                           'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing',
-                           'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until',
-                           'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between',
-                           'into', 'through', 'during', 'before', 'after', 'above', 'below',
-                           'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under',
-                           'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where',
-                           'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other',
-                           'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so',
-                           'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don',
-                           "don't", 'should', "should've", 'now', 'd', 'll', 'm', 'o', 're',
-                           've', 'y', 'ain', 'aren', "aren't", 'couldn', "couldn't", 'didn', "didn't",
-                           'doesn', "doesn't", 'hadn', "hadn't", 'hasn', "hasn't", 'haven', "haven't",
-                           'isn', "isn't", 'ma', 'mightn', "mightn't", 'mustn', "mustn't", 'needn',
-                           "needn't", 'shan', "shan't", 'shouldn', "shouldn't", 'wasn', "wasn't",
-                           'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't", 's']
         # 将porter stemmer改为了snowball stemmer，相对更加精准一点
         self.stemmer = snowballstemmer.stemmer('english')
 
@@ -54,16 +26,6 @@ class pretreater:
                         word_list.append(word)
 
         return word_list
-
-    # 进行filter & stemming
-    def final_stemmer(self, file_name: str):
-        word_list = self.split_file(file_name)
-        stemmed_word = []
-        for word in word_list:
-            if not word in self.stop_words:
-                word = self.stemmer.stemWord(word)
-                stemmed_word.append(word)
-        return stemmed_word
 
     """
     这里的spliter和接下来的phrease indexer的思路借鉴了来自 https://blog.csdn.net/u014328357/article/details/49943037 的CSDN博客
@@ -136,16 +98,6 @@ class Test(unittest.TestCase):
     #     file_name = 'text/Shakespeare/AsYouLikeIt.txt'
     #     print(pre.filter(file_name))
 
-    def test_stemmer_short(self):
-        pre = pretreater()
-        file_name = 'text/small_test/sentence_test.txt'
-        print(pre.final_stemmer(file_name))
-
-    def test_stemmer_long(self):
-        pre = pretreater()
-        file_name = 'text/Shakespeare/AsYouLikeIt.txt'
-        print(pre.final_stemmer(file_name))
-
     def test_phrase_spliter_short(self):
         pre = pretreater()
         file_name = 'text/small_test/sentence_test.txt'
@@ -180,3 +132,6 @@ class Test(unittest.TestCase):
         self.assertEqual(len(result.get('sadness')), 1)
         self.assertEqual(len(result.get('queen')), 119)
         # Ran 1 test in 0.066s, test pass
+
+if __name__ == '__main__':
+    unittest.main()
