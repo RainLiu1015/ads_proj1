@@ -59,11 +59,12 @@ class word_cunter:
             file_name = self.path + work_name
             inverted = self.pre.phrase_indexer(file_name)
             for word in inverted.keys():
-                if word in indices:
-                    indices[word][work_name] = inverted[word]
+                word_s = self.stemmer.stemWord(word)
+                if word_s in indices:
+                    indices[word_s][work_name] = inverted[word]
                 else :
-                    indices[word] = {}
-                    indices[word][work_name] = inverted[word]
+                    indices[word_s] = {}
+                    indices[word_s][work_name] = inverted[word]
         self.indices = indices
 
     """
@@ -77,6 +78,7 @@ class word_cunter:
         #     print(word[1])  words是一个由tuple(int, word)组成的list
         if (len(words_tuple) == 1): # 此时是一个单词
             word = words_tuple[0][1]
+            word = self.stemmer.stemWord(word)
             if (word in self.stop_words):
                 print('您查询的是一个stopword，请重新输入！')
                 return result
@@ -87,11 +89,12 @@ class word_cunter:
                     result.append(document_name)
         else: # 此时是一个短语
             # 判断是否是3个及一下的stop word组成的，如果是，则不予搜索
-            if all(tuple[1] in self.stop_words for tuple in words_tuple) and len(words_tuple) <= 3:
+            if all(self.stemmer(tuple[1]) in self.stop_words for tuple in words_tuple) and len(words_tuple) <= 3:
                 print('您输入的是三个及以下的stop words组成的短语，请重新输入！')
                 return result
-            # 先得到第一个word的locations
+            # 先得到第一个word的locatons
             first_word = words_tuple[0][1]
+            first_word = self.stemmer.stemWord(first_word)
             if first_word not in self.indices.keys():
                 return []
             final_locations = self.indices.get(first_word).copy()
@@ -101,6 +104,7 @@ class word_cunter:
             #接下来用排除法
             for i in range(1, len(words_tuple)):
                 curr_word = words_tuple[i][1]
+                curr_word = self.stemmer.stemWord(curr_word)
                 if curr_word not in self.indices.keys():
                     return []
                 curr_locations = self.indices.get(curr_word).copy()
